@@ -15,6 +15,10 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7 days
     ALGORITHM: str = "HS256"
 
+    # Initial Administrator Credentials (overridden by .env)
+    FIRST_SUPERUSER: str = "admin@internx.ai"
+    FIRST_SUPERUSER_PASSWORD: str = "Admin@123"
+
     # Database: Supports PostgreSQL or fallback to SQLite
     DATABASE_URL: str = "sqlite:///./internx.db"
 

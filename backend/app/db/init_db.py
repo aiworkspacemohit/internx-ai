@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from sqlalchemy.orm import Session
+from app.core.config import settings
 from app.core.security import get_password_hash
 from app.models.user import User, UserRole
 from app.models.company import CompanyProfile
@@ -10,12 +11,15 @@ from app.models.announcement import Announcement
 from app.models.notification import Notification
 
 def init_db(db: Session) -> None:
-    # 1. Seed System Admin
-    admin = db.query(User).filter(User.email == "admin@internx.ai").first()
+    # 1. Seed System Admin (Credentials read strictly from private .env settings)
+    admin_email = settings.FIRST_SUPERUSER or "admin@internx.ai"
+    admin_password = settings.FIRST_SUPERUSER_PASSWORD or "Admin@123"
+
+    admin = db.query(User).filter(User.role == UserRole.ADMIN).first()
     if not admin:
         admin = User(
-            email="admin@internx.ai",
-            password_hash=get_password_hash("Admin@123"),
+            email=admin_email,
+            password_hash=get_password_hash(admin_password),
             full_name="Prof. Rajesh Sharma (System Administrator)",
             role=UserRole.ADMIN,
             department="Placement Administration Cell",
