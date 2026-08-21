@@ -21,6 +21,7 @@ def generate_html_template(title: str, recipient_name: str, main_content: str, c
         .content {{ padding: 32px 24px; line-height: 1.6; font-size: 15px; color: #cbd5e1; }}
         .greeting {{ font-size: 18px; font-weight: 700; color: #ffffff; margin-bottom: 16px; }}
         .card-box {{ background-color: #1e293b; border-radius: 12px; border: 1px solid #334155; padding: 20px; margin: 20px 0; }}
+        .otp-badge {{ font-size: 32px; font-weight: 900; letter-spacing: 8px; color: #818cf8; text-align: center; background: #0f172a; padding: 16px; border-radius: 12px; border: 1px dashed #6366f1; margin: 20px 0; }}
         .btn {{ display: inline-block; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: #ffffff !important; text-decoration: none; padding: 12px 28px; border-radius: 10px; font-weight: 700; font-size: 14px; margin-top: 16px; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4); }}
         .footer {{ background-color: #0b0f19; padding: 20px; text-align: center; font-size: 12px; color: #64748b; border-top: 1px solid #1f2937; }}
       </style>
@@ -51,7 +52,7 @@ def generate_html_template(title: str, recipient_name: str, main_content: str, c
 
 def send_notification_email(to_email: str, recipient_name: str, subject: str, title: str, main_content: str, cta_text: str = "Go to Dashboard", cta_url: str = None):
     """
-    Sends background email notifications via SMTP, or logs structured simulated email if SMTP is inactive.
+    Sends background email notifications via SMTP.
     """
     if not settings.ENABLE_EMAIL_NOTIFICATIONS:
         logger.info(f"[EMAIL NOTIFICATIONS DISABLED] Skipped email to {to_email}")
@@ -83,6 +84,28 @@ def send_notification_email(to_email: str, recipient_name: str, subject: str, ti
         server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
         server.send_message(msg)
         server.quit()
-        logger.info(f"Successfully delivered email notification to {to_email}")
+        logger.info(f"Successfully delivered notification email to {to_email}")
     except Exception as e:
         logger.error(f"Failed to deliver email to {to_email}: {e}")
+
+def send_otp_email(to_email: str, recipient_name: str, otp_code: str):
+    """
+    Sends 6-digit Gmail OTP verification code to student email.
+    """
+    subject = "🔑 Your InternX AI Student Registration OTP Code"
+    title = "Verify Your Student Account"
+    main_content = f"""
+        <p>Thank you for registering on <strong>InternX AI Placement Portal</strong>.</p>
+        <p>Use the following 6-digit verification OTP to complete your student registration:</p>
+        <div class="otp-badge">{otp_code}</div>
+        <p style="font-size: 13px; color: #94a3b8;">This OTP is valid for <strong>10 minutes</strong>. Do not share this verification code with anyone.</p>
+    """
+    send_notification_email(
+        to_email=to_email,
+        recipient_name=recipient_name,
+        subject=subject,
+        title=title,
+        main_content=main_content,
+        cta_text="Verify & Sign In",
+        cta_url=f"{settings.FRONTEND_URL}/register/student"
+    )

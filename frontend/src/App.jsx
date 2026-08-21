@@ -4,6 +4,7 @@ import { useAuth } from './context/AuthContext';
 import Navbar from './components/common/Navbar';
 import Sidebar from './components/common/Sidebar';
 import ProtectedRoute from './routes/ProtectedRoute';
+import AIChatbotWidget from './components/student/AIChatbotWidget';
 
 // Auth Pages
 import Login from './pages/auth/Login';
@@ -44,7 +45,7 @@ const AppLayout = ({ children }) => {
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen bg-[#0b0f19] text-slate-100 flex flex-col font-sans">
+    <div className="min-h-screen bg-[#0b0f19] text-slate-100 flex flex-col font-sans relative">
       <Navbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
       
       <div className="flex flex-1 pt-16">
@@ -54,6 +55,9 @@ const AppLayout = ({ children }) => {
           {children}
         </main>
       </div>
+
+      {/* Floating Gemini AI Chatbot Widget */}
+      {user && <AIChatbotWidget />}
     </div>
   );
 };

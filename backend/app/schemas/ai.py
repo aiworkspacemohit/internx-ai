@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional, List, Dict, Any
 
 class ResumeReviewRequest(BaseModel):
     resume_text: str
@@ -39,3 +39,19 @@ class MilestoneItem(BaseModel):
 class CareerRoadmapResponse(BaseModel):
     target_role: str
     roadmap: List[MilestoneItem]
+
+class ChatMessage(BaseModel):
+    sender: str
+    text: str
+
+class ChatbotRequest(BaseModel):
+    message: str
+    history: Optional[List[ChatMessage]] = None
+
+class CandidateSuggestRequest(BaseModel):
+    job_title: str
+    job_description: str
+    candidates: List[Dict[str, Any]]
+
+class CandidateRankResponse(BaseModel):
+    candidates: List[Dict[str, Any]]

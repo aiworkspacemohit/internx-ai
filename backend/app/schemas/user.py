@@ -15,6 +15,13 @@ class StudentRegister(UserBase):
     skills: Optional[str] = None
     bio: Optional[str] = None
 
+class SendOTPRequest(BaseModel):
+    email: EmailStr
+    full_name: str
+
+class VerifyOTPRequest(StudentRegister):
+    otp_code: str
+
 class CompanyRegister(BaseModel):
     email: EmailStr
     password: str

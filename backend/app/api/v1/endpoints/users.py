@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from sqlalchemy.orm import Session
 from typing import List
 from app.core.database import get_db
 from app.core.security import get_current_user, get_password_hash, RoleChecker
 from app.models.user import User, UserRole
 from app.schemas.user import UserResponse, UserUpdate, OfficerCreate
+from app.services.cloudinary_service import CloudinaryService
 
 router = APIRouter()
 
@@ -53,6 +54,45 @@ def update_profile(
     db.commit()
     db.refresh(current_user)
     return current_user
+
+@router.post("/me/avatar")
+def upload_profile_picture(
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    if not file.content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="Please upload a valid image file (JPEG, PNG, WEBP, etc.)")
+
+    avatar_url = CloudinaryService.upload_profile_picture(file, current_user.id)
+    current_user.avatar_url = avatar_url
+    db.commit()
+    db.refresh(current_user)
+
+    return {
+        "message": "Profile picture updated successfully via Cloudinary!",
+        "avatar_url": avatar_url,
+        "user": current_user
+    }
+
+@router.post("/me/resume")
+def upload_student_resume(
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    result = CloudinaryService.upload_resume(file, current_user.id)
+    current_user.resume_url = result["resume_url"]
+    db.commit()
+    db.refresh(current_user)
+
+    return {
+        "message": "Resume uploaded successfully to Cloudinary!",
+        "resume_url": result["resume_url"],
+        "filename": result["filename"],
+        "extracted_text": result["extracted_text"],
+        "user": current_user
+    }
 
 @router.put("/{user_id}/toggle-active")
 def toggle_user_active(

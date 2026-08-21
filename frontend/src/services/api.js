@@ -38,6 +38,8 @@ api.interceptors.response.use(
 
 export const authService = {
   login: (credentials) => api.post('/auth/login', credentials),
+  sendOtp: (data) => api.post('/auth/register/send-otp', data),
+  verifyOtpAndRegister: (data) => api.post('/auth/register/verify-otp', data),
   registerStudent: (data) => api.post('/auth/register/student', data),
   registerCompany: (data) => api.post('/auth/register/company', data),
   getMe: () => api.get('/auth/me'),
@@ -47,6 +49,12 @@ export const userService = {
   getUsers: (role) => api.get('/users/', { params: { role } }),
   createOfficer: (data) => api.post('/users/officers', data),
   updateProfile: (data) => api.put('/users/me', data),
+  uploadAvatar: (formData) => api.post('/users/me/avatar', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  uploadResume: (formData) => api.post('/users/me/resume', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
   toggleActive: (userId) => api.put(`/users/${userId}/toggle-active`),
 };
 
@@ -94,8 +102,14 @@ export const notificationService = {
 
 export const aiService = {
   reviewResume: (data) => api.post('/ai/resume-review', data),
+  parseResume: (formData) => api.post('/ai/parse-resume', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
   generateInterviewPrep: (data) => api.post('/ai/interview-prep', data),
   generateCareerRoadmap: (data) => api.post('/ai/career-roadmap', data),
+  suggestCandidates: (data) => api.post('/ai/suggest-candidates', data),
+  sendChatMessage: (data) => api.post('/ai/chatbot', data),
+  getRecommendations: () => api.get('/ai/recommendations'),
 };
 
 export const analyticsService = {
