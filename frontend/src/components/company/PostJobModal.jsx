@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { internshipService } from '../../services/api';
-import { X, Briefcase, DollarSign, MapPin, Calendar, Layers, CheckCircle } from 'lucide-react';
+import { X, Briefcase, IndianRupee, MapPin, Calendar, Layers, CheckCircle } from 'lucide-react';
 
 const PostJobModal = ({ isOpen, onClose, onJobPosted }) => {
   const [formData, setFormData] = useState({
     title: '',
     role_category: 'Full Stack',
-    stipend: '$3,000/month',
-    location: 'Remote',
+    stipend: '₹35,000/month',
+    location: 'Bangalore (Hybrid)',
     duration: '12 Weeks',
     openings: 2,
     description: '',
@@ -92,11 +92,11 @@ const PostJobModal = ({ isOpen, onClose, onJobPosted }) => {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Stipend *</label>
+              <label className="block text-xs font-semibold text-slate-300 mb-1">Stipend (₹ / Month) *</label>
               <input
                 type="text"
                 required
-                placeholder="e.g. $3,000/mo or Unpaid"
+                placeholder="e.g. ₹35,000/mo or Unpaid"
                 value={formData.stipend}
                 onChange={(e) => setFormData({ ...formData, stipend: e.target.value })}
                 className="w-full bg-slate-900/80 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-indigo-500"
@@ -108,7 +108,7 @@ const PostJobModal = ({ isOpen, onClose, onJobPosted }) => {
               <input
                 type="text"
                 required
-                placeholder="e.g. Remote / New York"
+                placeholder="e.g. Bangalore / Remote"
                 value={formData.location}
                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                 className="w-full bg-slate-900/80 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-indigo-500"

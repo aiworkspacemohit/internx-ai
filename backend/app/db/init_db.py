@@ -10,16 +10,16 @@ from app.models.announcement import Announcement
 from app.models.notification import Notification
 
 def init_db(db: Session) -> None:
-    # 1. Seed Admin
+    # 1. Seed System Admin
     admin = db.query(User).filter(User.email == "admin@internx.ai").first()
     if not admin:
         admin = User(
             email="admin@internx.ai",
             password_hash=get_password_hash("Admin@123"),
-            full_name="System Administrator",
+            full_name="Prof. Rajesh Sharma (System Administrator)",
             role=UserRole.ADMIN,
-            department="Placement Administration",
-            phone="+1 (555) 019-2831"
+            department="Placement Administration Cell",
+            phone="+91 98765 43210"
         )
         db.add(admin)
         db.commit()
@@ -30,10 +30,10 @@ def init_db(db: Session) -> None:
         officer = User(
             email="officer@university.edu",
             password_hash=get_password_hash("Officer@123"),
-            full_name="Dr. Eleanor Vance",
+            full_name="Dr. Ananya Iyer",
             role=UserRole.OFFICER,
             department="Computer Science & Engineering",
-            phone="+1 (555) 012-3456"
+            phone="+91 91234 56789"
         )
         db.add(officer)
         db.commit()
@@ -44,7 +44,7 @@ def init_db(db: Session) -> None:
         c1_user = User(
             email="recruiter@google.com",
             password_hash=get_password_hash("Company@123"),
-            full_name="Sarah Jenkins (Google University Recruiting)",
+            full_name="Vikram Malhotra (Google India University Recruiting)",
             role=UserRole.COMPANY
         )
         db.add(c1_user)
@@ -53,30 +53,30 @@ def init_db(db: Session) -> None:
 
         c1_profile = CompanyProfile(
             user_id=c1_user.id,
-            company_name="Google",
+            company_name="Google India",
             industry="Technology & Cloud",
             website="https://careers.google.com",
-            location="Mountain View, CA (Hybrid)",
+            location="Bangalore, Karnataka (Hybrid)",
             description="Google LLC is an American multinational technology company focusing on artificial intelligence, search engine technology, cloud computing, and computer software.",
             logo_url="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png",
             is_approved=True,
             verification_status="APPROVED",
-            contact_person="Sarah Jenkins",
+            contact_person="Vikram Malhotra",
             contact_email="recruiter@google.com"
         )
         db.add(c1_profile)
         db.commit()
         db.refresh(c1_profile)
 
-        # Post Internships for Google
+        # Post Internships for Google India
         job1 = Internship(
             company_id=c1_profile.id,
             title="Software Engineering Intern - Summer 2026",
             role_category="Full Stack",
-            description="Join Google's core engineering team to build scalable cloud infrastructure, backend microservices, and modern frontend interfaces using Python, Go, React, and Kubernetes.",
+            description="Join Google's core engineering team in Bangalore to build scalable cloud infrastructure, backend microservices, and modern frontend interfaces using Python, Go, React, and Kubernetes.",
             requirements="Python, C++, React, Data Structures & Algorithms, Git, System Design basics",
-            stipend="$4,500/month + Housing Stipend",
-            location="Mountain View, CA (Hybrid)",
+            stipend="₹45,000/month + Accommodation Allowance",
+            location="Bangalore, Karnataka (Hybrid)",
             duration="12 Weeks",
             openings=5,
             deadline=datetime.now(timezone.utc) + timedelta(days=30)
@@ -87,8 +87,8 @@ def init_db(db: Session) -> None:
             role_category="AI/ML",
             description="Work alongside Google DeepMind research scientists on multimodal Gemini architectures, LLM fine-tuning pipelines, and high-throughput evaluation models.",
             requirements="Python, PyTorch, TensorFlow, NLP, Linear Algebra, Multimodal AI experience",
-            stipend="$5,200/month",
-            location="New York, NY",
+            stipend="₹55,000/month",
+            location="Bangalore / Remote",
             duration="16 Weeks",
             openings=3,
             deadline=datetime.now(timezone.utc) + timedelta(days=45)
@@ -101,7 +101,7 @@ def init_db(db: Session) -> None:
         c2_user = User(
             email="recruiter@stripe.com",
             password_hash=get_password_hash("Company@123"),
-            full_name="Marcus Vance (Stripe Tech Recruiter)",
+            full_name="Pooja Sharma (Stripe India Tech Recruiting)",
             role=UserRole.COMPANY
         )
         db.add(c2_user)
@@ -110,15 +110,15 @@ def init_db(db: Session) -> None:
 
         c2_profile = CompanyProfile(
             user_id=c2_user.id,
-            company_name="Stripe",
+            company_name="Stripe India",
             industry="Fintech & Payments",
             website="https://stripe.com",
-            location="San Francisco, CA (Remote)",
+            location="Hyderabad, Telangana (Remote)",
             description="Stripe builds financial infrastructure for the internet. Businesses of every size use our software to accept payments and manage their businesses online.",
             logo_url="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg",
             is_approved=True,
             verification_status="APPROVED",
-            contact_person="Marcus Vance",
+            contact_person="Pooja Sharma",
             contact_email="recruiter@stripe.com"
         )
         db.add(c2_profile)
@@ -131,7 +131,7 @@ def init_db(db: Session) -> None:
             role_category="Backend",
             description="Build high-performance microservices processing millions of daily API requests securely with sub-50ms latency.",
             requirements="FastAPI, Python, SQL, Redis, Distributed Systems",
-            stipend="$4,200/month",
+            stipend="₹40,000/month",
             location="Remote",
             duration="12 Weeks",
             openings=4,
@@ -146,7 +146,7 @@ def init_db(db: Session) -> None:
         c3_user = User(
             email="hiring@quantum-ai.io",
             password_hash=get_password_hash("Company@123"),
-            full_name="Dr. Aris Thorne",
+            full_name="Dr. Suresh Pillai",
             role=UserRole.COMPANY
         )
         db.add(c3_user)
@@ -155,48 +155,48 @@ def init_db(db: Session) -> None:
 
         c3_profile = CompanyProfile(
             user_id=c3_user.id,
-            company_name="Quantum AI Inc.",
+            company_name="Quantum AI Labs India",
             industry="Quantum Computing & AI",
             website="https://quantum-ai.io",
-            location="Boston, MA",
+            location="Pune, Maharashtra",
             description="Cutting-edge research laboratory pioneering quantum machine learning algorithms.",
             logo_url="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200",
             is_approved=False,
             verification_status="PENDING",
-            contact_person="Dr. Aris Thorne",
+            contact_person="Dr. Suresh Pillai",
             contact_email="hiring@quantum-ai.io"
         )
         db.add(c3_profile)
         db.commit()
 
     # 4. Seed Student Accounts & Applications
-    student = db.query(User).filter(User.email == "alex.rivera@student.edu").first()
+    student = db.query(User).filter(User.email == "aarav.sharma@gmail.com").first()
     if not student:
         student = User(
-            email="alex.rivera@student.edu",
+            email="aarav.sharma@gmail.com",
             password_hash=get_password_hash("Student@123"),
-            full_name="Alex Rivera",
+            full_name="Aarav Sharma",
             role=UserRole.STUDENT,
-            phone="+1 (555) 345-6789",
+            phone="+91 98200 11223",
             department="Computer Science",
-            cgpa="3.85 / 4.0",
+            cgpa="8.95 / 10.0",
             skills="Python, React, FastAPI, SQL, Tailwind CSS, Git, PyTorch",
             bio="Passionate 3rd-year CS student specializing in full-stack web applications and machine learning integrations.",
-            github_url="https://github.com/alexrivera-dev",
-            linkedin_url="https://linkedin.com/in/alexrivera-cs"
+            github_url="https://github.com/aaravsharma-dev",
+            linkedin_url="https://linkedin.com/in/aaravsharma-cs"
         )
         db.add(student)
         db.commit()
         db.refresh(student)
 
-        # Create demo application for Alex
+        # Create demo application for Aarav
         first_job = db.query(Internship).first()
         if first_job:
             app1 = Application(
                 student_id=student.id,
                 internship_id=first_job.id,
-                cover_letter="I am extremely excited to apply for the Software Engineering Internship at Google. My experience building production FastAPI microservices and React frontends aligns directly with your engineering requirements.",
-                resume_url="https://cloudinary.com/demo/alex_rivera_resume.pdf",
+                cover_letter="I am extremely excited to apply for the Software Engineering Internship at Google India. My experience building production FastAPI microservices and React frontends aligns directly with your engineering requirements.",
+                resume_url="https://cloudinary.com/demo/aarav_sharma_resume.pdf",
                 status=ApplicationStatus.INTERVIEW_ROUND,
                 feedback="Candidate performed exceptionally in the initial code challenge."
             )
@@ -204,14 +204,14 @@ def init_db(db: Session) -> None:
             db.commit()
             db.refresh(app1)
 
-            # Schedule an interview for Alex
+            # Schedule an interview for Aarav
             interview1 = Interview(
                 application_id=app1.id,
                 round_name="Technical Round 1 - Data Structures & System Design",
                 scheduled_at=datetime.now(timezone.utc) + timedelta(days=2, hours=4),
                 duration_minutes=60,
                 meeting_link="https://meet.google.com/internx-tech-interview-demo",
-                interviewer_name="David Zhang (Staff SWE)",
+                interviewer_name="Rohan Deshmukh (Senior Tech Lead)",
                 notes="Focus on algorithm complexity, REST API design, and SQL indexing.",
                 status="SCHEDULED"
             )
@@ -221,7 +221,7 @@ def init_db(db: Session) -> None:
             n1 = Notification(
                 user_id=student.id,
                 title="Interview Scheduled!",
-                message=f"Google scheduled your 'Technical Round 1' interview for {interview1.scheduled_at.strftime('%b %d at %I:%M %p')}.",
+                message=f"Google India scheduled your 'Technical Round 1' interview for {interview1.scheduled_at.strftime('%b %d at %I:%M %p')}.",
                 type="INTERVIEW"
             )
             db.add(n1)
@@ -239,8 +239,8 @@ def init_db(db: Session) -> None:
         )
         a2 = Announcement(
             author_id=officer.id,
-            title="Google & Stripe Campus Recruitment Drive Announced",
-            content="Google and Stripe have officially opened applications on InternX AI for Summer 2026 roles. Apply through your student dashboard to submit verified resumes.",
+            title="Google India & Stripe Campus Recruitment Drive Announced",
+            content="Google India and Stripe have officially opened applications on InternX AI for Summer 2026 roles. Apply through your student dashboard to submit verified resumes.",
             target_department="Computer Science",
             priority="URGENT"
         )
