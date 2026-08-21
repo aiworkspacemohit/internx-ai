@@ -16,8 +16,8 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
 
     # Initial Administrator Credentials (overridden by .env)
-    FIRST_SUPERUSER: str = "admin@internx.ai"
-    FIRST_SUPERUSER_PASSWORD: str = "Admin@123"
+    FIRST_SUPERUSER: str = ""
+    FIRST_SUPERUSER_PASSWORD: str = ""
 
     # Database: Supports PostgreSQL or fallback to SQLite
     DATABASE_URL: str = "sqlite:///./internx.db"
