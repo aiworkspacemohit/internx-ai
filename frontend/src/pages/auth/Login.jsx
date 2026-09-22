@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Sparkles, Lock, Mail, ArrowRight, UserCheck, GraduationCap, Building2, ShieldCheck, UserCog } from 'lucide-react';
+import { GraduationCap, Sparkles, ArrowRight, ShieldCheck, CheckCircle2 } from 'lucide-react';
 
 const Login = () => {
   const { login } = useAuth();
@@ -20,11 +20,6 @@ const Login = () => {
     try {
       const user = await login(email, password);
       
-      // Optional role check validation
-      if (selectedRole && user.role !== selectedRole) {
-        // Redirect according to actual user role
-      }
-
       switch (user.role) {
         case 'STUDENT': navigate('/student/dashboard'); break;
         case 'COMPANY': navigate('/company/dashboard'); break;
@@ -33,7 +28,7 @@ const Login = () => {
         default: navigate('/');
       }
     } catch (err) {
-      setError(err.response?.data?.detail || 'Invalid email or password');
+      setError(err.response?.data?.detail || 'Invalid credentials. Please verify your email and password.');
     } finally {
       setLoading(false);
     }
@@ -50,164 +45,156 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[#0b0f19]">
-      {/* Background Decorative Glow Circles */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-600/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-violet-600/15 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="w-full max-w-md space-y-6 relative z-10">
+    <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-[#f0f2f9]">
+      
+      {/* Edu.ai Split Card Container */}
+      <div className="w-full max-w-4xl bg-white rounded-3xl border border-slate-200/80 shadow-xl overflow-hidden grid grid-cols-1 md:grid-cols-12 min-h-[560px]">
         
-        {/* Brand Header */}
-        <div className="text-center space-y-2">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full border border-indigo-500/30 bg-indigo-500/10 mb-1">
-            <Sparkles className="w-4 h-4 text-indigo-400" />
-            <span className="text-xs font-semibold text-indigo-300">Next-Gen Placement Portal</span>
-          </div>
-          <h1 className="text-3xl font-extrabold text-white tracking-tight font-sans">
-            Welcome to <span className="gradient-text">InternX AI</span>
-          </h1>
-          <p className="text-xs text-slate-400">Sign in to access your placement dashboard</p>
-        </div>
-
-        {/* Role Selector Tabs */}
-        <div className="grid grid-cols-4 gap-1 p-1.5 bg-slate-900/80 border border-slate-800 rounded-2xl text-xs font-semibold">
-          <button
-            type="button"
-            onClick={() => { setSelectedRole('STUDENT'); setError(''); }}
-            className={`py-2 px-1 rounded-xl transition flex flex-col sm:flex-row items-center justify-center gap-1.5 ${
-              selectedRole === 'STUDENT'
-                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 font-bold'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <GraduationCap size={15} />
-            <span className="truncate">Student</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => { setSelectedRole('COMPANY'); setError(''); }}
-            className={`py-2 px-1 rounded-xl transition flex flex-col sm:flex-row items-center justify-center gap-1.5 ${
-              selectedRole === 'COMPANY'
-                ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 font-bold'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <Building2 size={15} />
-            <span className="truncate">Company</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => { setSelectedRole('OFFICER'); setError(''); }}
-            className={`py-2 px-1 rounded-xl transition flex flex-col sm:flex-row items-center justify-center gap-1.5 ${
-              selectedRole === 'OFFICER'
-                ? 'bg-amber-600 text-white shadow-lg shadow-amber-600/30 font-bold'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <UserCheck size={15} />
-            <span className="truncate">Officer</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => { setSelectedRole('ADMIN'); setError(''); }}
-            className={`py-2 px-1 rounded-xl transition flex flex-col sm:flex-row items-center justify-center gap-1.5 ${
-              selectedRole === 'ADMIN'
-                ? 'bg-rose-600 text-white shadow-lg shadow-rose-600/30 font-bold'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <ShieldCheck size={15} />
-            <span className="truncate">Admin</span>
-          </button>
-        </div>
-
-        {/* Login Glass Card */}
-        <div className="glass-card p-8 rounded-3xl border border-slate-700/80 shadow-2xl space-y-6">
+        {/* Left Side: Indigo Company Branding & Hero Panel */}
+        <div className="md:col-span-5 bg-gradient-to-br from-indigo-600 via-indigo-700 to-indigo-900 p-8 text-white flex flex-col justify-between relative overflow-hidden">
           
-          <div className="text-center pb-1">
-            <h3 className="text-lg font-extrabold text-white">
-              {selectedRole === 'STUDENT' && 'Student Login'}
-              {selectedRole === 'COMPANY' && 'Recruiter / Corporate Login'}
-              {selectedRole === 'OFFICER' && 'Placement Officer Login'}
-              {selectedRole === 'ADMIN' && 'System Admin Portal'}
-            </h3>
-            <p className="text-xs text-slate-400 mt-0.5">Enter your registered credentials below</p>
+          {/* Subtle Accent Glow */}
+          <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+
+          {/* Top Logo */}
+          <div className="relative z-10 space-y-4">
+            <div className="flex items-center space-x-2.5">
+              <div className="w-10 h-10 rounded-2xl bg-white text-indigo-700 flex items-center justify-center font-bold shadow-md">
+                <GraduationCap className="w-6 h-6" />
+              </div>
+              <span className="text-xl font-extrabold tracking-tight text-white">
+                InternX<span className="text-lime-300">.ai</span>
+              </span>
+            </div>
+
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-lime-300 text-xs font-semibold backdrop-blur-xs">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Placement Intelligence</span>
+            </div>
           </div>
 
-          {error && (
-            <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-medium">
-              {error}
-            </div>
-          )}
+          {/* Hero Feature List */}
+          <div className="relative z-10 space-y-4 my-6">
+            <h2 className="text-2xl font-bold leading-tight text-white">
+              AI-Powered Campus Recruitment Engine
+            </h2>
+            
+            <ul className="space-y-2.5 text-xs text-indigo-100 font-medium">
+              <li className="flex items-center space-x-2">
+                <CheckCircle2 className="w-4 h-4 text-lime-300 shrink-0" />
+                <span>Automated Gemini ATS Resume Scoring</span>
+              </li>
+              <li className="flex items-center space-x-2">
+                <CheckCircle2 className="w-4 h-4 text-lime-300 shrink-0" />
+                <span>Real-Time Placement Telemetry & Analytics</span>
+              </li>
+              <li className="flex items-center space-x-2">
+                <CheckCircle2 className="w-4 h-4 text-lime-300 shrink-0" />
+                <span>One-Click Corporate Recruiter Pipeline</span>
+              </li>
+            </ul>
+          </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Bottom Badge */}
+          <div className="relative z-10 pt-4 border-t border-white/15 flex items-center justify-between text-[11px] text-indigo-200">
+            <span>Enterprise Campus System</span>
+            <ShieldCheck className="w-4 h-4 text-lime-300" />
+          </div>
+
+        </div>
+
+        {/* Right Side: Clean White Form Container */}
+        <div className="md:col-span-7 p-8 sm:p-10 flex flex-col justify-between space-y-6 bg-white">
+          
+          <div className="space-y-5">
+            
+            {/* Form Headline */}
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">Email Address</label>
-              <div className="relative">
-                <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+              <span className="text-xs font-semibold text-indigo-600 block mb-1">Single Sign-On</span>
+              <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+                Welcome back
+              </h1>
+              <p className="text-xs text-slate-500 mt-1">
+                Select your role and enter your registered account credentials.
+              </p>
+            </div>
+
+            {/* Role Tabs */}
+            <div className="grid grid-cols-4 gap-1 p-1 bg-slate-100 rounded-xl text-xs font-medium">
+              {['STUDENT', 'COMPANY', 'OFFICER', 'ADMIN'].map((role) => (
+                <button
+                  key={role}
+                  type="button"
+                  onClick={() => { setSelectedRole(role); setError(''); }}
+                  className={`py-2 px-1 rounded-lg transition text-xs font-semibold ${
+                    selectedRole === role
+                      ? 'bg-zinc-900 text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  {role.charAt(0) + role.slice(1).toLowerCase()}
+                </button>
+              ))}
+            </div>
+
+            {error && (
+              <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-medium">
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-4 pt-1">
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1.5">Email Address</label>
                 <input
                   type="email"
                   required
                   placeholder={getRolePlaceholder()}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-slate-900/80 border border-slate-700 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white transition"
                 />
               </div>
-            </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">Password</label>
-              <div className="relative">
-                <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1.5">Password</label>
                 <input
                   type="password"
                   required
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-slate-900/80 border border-slate-700 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white transition"
                 />
               </div>
-            </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full gradient-bg-primary py-3 rounded-xl font-semibold text-sm flex items-center justify-center space-x-2 transition-all shadow-lg shadow-indigo-600/30 hover:shadow-indigo-500/50"
-            >
-              <span>{loading ? 'Authenticating...' : `Sign In as ${selectedRole.charAt(0) + selectedRole.slice(1).toLowerCase()}`}</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </form>
-
-          {/* Registration Options */}
-          <div className="text-center pt-4 border-t border-slate-800 space-y-3">
-            <p className="text-xs text-slate-400">Need a new portal account?</p>
-            <div className="grid grid-cols-2 gap-2 text-xs font-bold">
-              <Link
-                to="/register/student"
-                className="p-2.5 rounded-xl bg-indigo-950/40 border border-indigo-500/30 text-indigo-300 hover:bg-indigo-900/50 text-center transition flex items-center justify-center gap-1.5"
+              {/* Primary Action Button */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-zinc-900 hover:bg-black text-white text-xs font-semibold py-3 px-5 rounded-xl transition-all shadow-sm flex items-center justify-center space-x-2 active:scale-[0.99] mt-2"
               >
-                <GraduationCap size={15} />
-                Register as Student
-              </Link>
+                <span>{loading ? 'Authenticating...' : `Sign in as ${selectedRole.charAt(0) + selectedRole.slice(1).toLowerCase()}`}</span>
+                <ArrowRight className="w-4 h-4 text-lime-300" />
+              </button>
+            </form>
 
-              <Link
-                to="/register/company"
-                className="p-2.5 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-900/50 text-center transition flex items-center justify-center gap-1.5"
-              >
-                <Building2 size={15} />
-                Register Company
-              </Link>
+          </div>
+
+          {/* Bottom Links */}
+          <div className="pt-4 border-t border-slate-100 text-xs text-slate-500 flex items-center justify-between">
+            <span>Don't have an account?</span>
+            <div className="flex items-center space-x-3 font-semibold text-indigo-600">
+              <Link to="/register/student" className="hover:underline">Student Signup</Link>
+              <span className="text-slate-300">•</span>
+              <Link to="/register/company" className="hover:underline">Company Portal</Link>
             </div>
           </div>
 
         </div>
+
       </div>
+
     </div>
   );
 };

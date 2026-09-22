@@ -45,13 +45,13 @@ const AppLayout = ({ children }) => {
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen bg-[#0b0f19] text-slate-100 flex flex-col font-sans relative">
+    <div className="min-h-screen bg-[#f0f2f9] text-slate-900 flex flex-col font-sans relative">
       <Navbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
       
       <div className="flex flex-1 pt-16">
         {user && <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />}
         
-        <main className={`flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full transition-all duration-300 ${user ? 'lg:ml-64' : ''}`}>
+        <main className={`flex-1 p-4 sm:p-6 lg:p-8 max-w-[1600px] mx-auto w-full transition-all duration-300 ${user ? 'lg:ml-64' : ''}`}>
           {children}
         </main>
       </div>
@@ -61,6 +61,7 @@ const AppLayout = ({ children }) => {
     </div>
   );
 };
+
 
 const DefaultRedirect = () => {
   const { user } = useAuth();

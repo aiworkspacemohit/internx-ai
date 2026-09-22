@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { analyticsService, internshipService, applicationService } from '../../services/api';
 import StatCard from '../../components/common/StatCard';
 import PostJobModal from '../../components/company/PostJobModal';
-import { Briefcase, Users, Calendar, Award, Plus, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Briefcase, Users, Calendar, Award, Plus } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
 const CompanyDashboard = () => {
@@ -42,66 +42,66 @@ const CompanyDashboard = () => {
   ];
 
   if (loading) {
-    return <div className="text-center py-12 text-indigo-400">Loading recruiter analytics...</div>;
+    return <div className="text-center py-12 text-indigo-600 text-xs font-semibold">Loading recruiter analytics...</div>;
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in">
+    <div className="space-y-6 animate-in fade-in text-slate-900 max-w-[1600px] mx-auto">
       
       {/* Header Banner */}
-      <div className="glass-card p-6 rounded-3xl border border-slate-700/80 bg-gradient-to-r from-emerald-950/40 via-slate-900 to-indigo-950/40 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-extrabold text-white">Company Recruiter Dashboard</h1>
-          <p className="text-xs md:text-sm text-slate-400">Manage active internship opportunities, applicant funnels, and schedule candidate rounds</p>
+      <div className="p-6 sm:p-8 rounded-3xl border border-slate-200/80 bg-white flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs">
+        <div className="space-y-1">
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Corporate Recruiter Portal</h1>
+          <p className="text-xs text-slate-500 font-medium">Manage active internship opportunities, candidate pipelines & schedule rounds</p>
         </div>
         <button
           onClick={() => setShowPostModal(true)}
-          className="gradient-bg-primary px-5 py-2.5 rounded-xl font-semibold text-xs flex items-center space-x-2 shadow-lg shadow-indigo-600/30 hover:scale-105 transition"
+          className="bg-zinc-900 hover:bg-black text-white px-5 py-2.5 rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition shadow-xs shrink-0"
         >
-          <Plus className="w-4 h-4" />
-          <span>Post Internship Opportunity</span>
+          <Plus className="w-4 h-4 text-lime-300" />
+          <span>Post Internship</span>
         </button>
       </div>
 
       {/* Metrics Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard title="Active Postings" value={stats?.total_postings || 0} icon={Briefcase} color="indigo" subtext="Live job listings" />
-        <StatCard title="Total Candidates" value={stats?.total_applicants || 0} icon={Users} color="emerald" subtext="Submitted candidate resumes" />
-        <StatCard title="Scheduled Interviews" value={stats?.scheduled_interviews || 0} icon={Calendar} color="amber" subtext="Active technical rounds" />
-        <StatCard title="Offers Issued" value={stats?.offers_issued || 0} icon={Award} color="blue" subtext={`${stats?.conversion_rate_percent || 0}% Offer conversion`} />
+        <StatCard title="Active Postings" value={stats?.total_postings || 0} icon={Briefcase} subtext="Live job listings" />
+        <StatCard title="Total Candidates" value={stats?.total_applicants || 0} icon={Users} subtext="Submitted candidate resumes" />
+        <StatCard title="Scheduled Interviews" value={stats?.scheduled_interviews || 0} icon={Calendar} subtext="Active technical rounds" />
+        <StatCard title="Offers Issued" value={stats?.offers_issued || 0} icon={Award} subtext={`${stats?.conversion_rate_percent || 0}% Conversion`} />
       </div>
 
       {/* Recruitment Funnel Chart & Recent Applicants */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Recruitment Funnel Chart */}
-        <div className="lg:col-span-2 glass-card p-6 rounded-2xl border border-slate-700/80 space-y-4">
-          <h3 className="text-base font-bold text-white">Recruitment Funnel Distribution</h3>
+        <div className="lg:col-span-2 bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-xs space-y-5">
+          <h3 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-3">Recruitment Funnel Distribution</h3>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                <XAxis dataKey="name" stroke="#94a3b8" fontSize={12} />
-                <YAxis stroke="#94a3b8" fontSize={12} />
-                <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '12px', fontSize: '12px' }} />
-                <Bar dataKey="count" fill="#6366f1" radius={[8, 8, 0, 0]} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                <XAxis dataKey="name" stroke="#94a3b8" fontSize={11} />
+                <YAxis stroke="#94a3b8" fontSize={11} />
+                <Tooltip contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', borderRadius: '12px', fontSize: '12px', color: '#0f172a' }} />
+                <Bar dataKey="count" fill="#4f46e5" radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
         {/* Recent Applicants */}
-        <div className="glass-card p-6 rounded-2xl border border-slate-700/80 space-y-4">
-          <h3 className="text-base font-bold text-white">Recent Applicants</h3>
+        <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-xs space-y-5">
+          <h3 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-3">Recent Applicants</h3>
           <div className="space-y-3">
             {applicants.slice(0, 4).map((app) => (
-              <div key={app.id} className="p-3 rounded-xl bg-slate-900/60 border border-slate-800 space-y-1 text-xs">
-                <div className="flex items-center justify-between font-bold text-white">
+              <div key={app.id} className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/60 space-y-1.5 text-xs">
+                <div className="flex items-center justify-between font-bold text-slate-900">
                   <span>{app.student?.full_name}</span>
-                  <span className="text-[10px] text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded">{app.status}</span>
+                  <span className="text-[10px] bg-indigo-100 text-indigo-800 font-semibold px-2 py-0.5 rounded-full">{app.status}</span>
                 </div>
-                <p className="text-slate-400">{app.internship?.title}</p>
-                <p className="text-[10px] text-slate-500">{app.student?.department} • CGPA: {app.student?.cgpa || 'N/A'}</p>
+                <p className="text-slate-700 font-medium">{app.internship?.title}</p>
+                <p className="text-[11px] text-slate-400">{app.student?.department} • CGPA: {app.student?.cgpa || 'N/A'}</p>
               </div>
             ))}
           </div>

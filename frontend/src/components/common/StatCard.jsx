@@ -1,35 +1,51 @@
 import React from 'react';
+import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
 
-const StatCard = ({ title, value, icon: Icon, color = 'indigo', subtext }) => {
-  const getColorClasses = () => {
-    switch (color) {
-      case 'emerald':
-        return 'from-emerald-500/20 to-emerald-600/5 text-emerald-400 border-emerald-500/30';
-      case 'amber':
-        return 'from-amber-500/20 to-amber-600/5 text-amber-400 border-amber-500/30';
-      case 'rose':
-        return 'from-rose-500/20 to-rose-600/5 text-rose-400 border-rose-500/30';
-      case 'blue':
-        return 'from-blue-500/20 to-blue-600/5 text-blue-400 border-blue-500/30';
-      default:
-        return 'from-indigo-500/20 to-indigo-600/5 text-indigo-400 border-indigo-500/30';
-    }
-  };
+const StatCard = ({ title, value, subtext, trend, isHighlighted, icon: Icon }) => {
+  if (isHighlighted) {
+    return (
+      <div className="p-5 rounded-2xl bg-[#bef264]/20 border-2 border-dashed border-[#bef264] relative overflow-hidden transition hover:shadow-sm">
+        <span className="text-[11px] font-semibold text-slate-700 block mb-1">
+          {title}
+        </span>
+        <div className="flex items-baseline space-x-2">
+          <h3 className="text-3xl font-extrabold text-slate-900 tracking-tight">{value}</h3>
+          {subtext && <span className="text-xs text-slate-500 font-medium">{subtext}</span>}
+        </div>
+        <div className="mt-3 flex items-center gap-1.5">
+          <span className="inline-flex items-center text-[10px] font-bold bg-zinc-900 text-white px-2 py-0.5 rounded-full">
+            <ArrowUpRight className="w-3 h-3 mr-0.5 text-lime-300" />
+            {trend || '41% vs last week'}
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className={`glass-card p-5 rounded-2xl border bg-gradient-to-br ${getColorClasses()} glass-card-hover`}>
-      <div className="flex items-center justify-between">
+    <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs hover:border-slate-300 transition-all">
+      <div className="flex items-start justify-between">
         <div>
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{title}</p>
-          <h3 className="text-2xl font-extrabold text-white mt-1 font-sans">{value}</h3>
-          {subtext && <p className="text-[11px] text-slate-400 mt-1">{subtext}</p>}
+          <span className="text-xs font-semibold text-slate-400 block mb-1">{title}</span>
+          <div className="flex items-baseline space-x-2">
+            <h3 className="text-3xl font-extrabold text-slate-900 tracking-tight">{value}</h3>
+            {subtext && <span className="text-xs text-slate-400 font-medium">{subtext}</span>}
+          </div>
         </div>
         {Icon && (
-          <div className="p-3 rounded-xl bg-slate-900/60 border border-slate-700/50">
-            <Icon className="w-6 h-6" />
+          <div className="p-2.5 rounded-xl bg-slate-100 text-slate-700">
+            <Icon className="w-4 h-4" />
           </div>
         )}
       </div>
+
+      {trend && (
+        <div className="mt-3 flex items-center gap-1.5">
+          <span className="inline-flex items-center text-[10px] font-semibold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">
+            ✓ {trend}
+          </span>
+        </div>
+      )}
     </div>
   );
 };

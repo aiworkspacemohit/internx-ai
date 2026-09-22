@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { internshipService, applicationService } from '../../services/api';
-import { Search, Filter, MapPin, DollarSign, Clock, Building2, CheckCircle2, ArrowRight, X } from 'lucide-react';
+import { Search, MapPin, DollarSign, CheckCircle2, ArrowRight, X } from 'lucide-react';
 
 const InternshipSearch = () => {
   const [internships, setInternships] = useState([]);
@@ -52,26 +52,27 @@ const InternshipSearch = () => {
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in">
+    <div className="space-y-6 animate-in fade-in text-slate-900 max-w-[1600px] mx-auto">
       
-      {/* Search Header */}
-      <div className="glass-card p-6 rounded-3xl border border-slate-700/80 space-y-4">
+      {/* Search Header Container */}
+      <div className="p-6 sm:p-8 rounded-3xl border border-slate-200/80 bg-white space-y-5 shadow-xs">
         <div>
-          <h1 className="text-2xl font-extrabold text-white">Explore Internships</h1>
-          <p className="text-xs text-slate-400">Discover verified opportunities posted by top global companies</p>
+          <span className="text-xs font-semibold text-indigo-600 block mb-1">Live Opportunities</span>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Explore Placement Opportunities</h1>
+          <p className="text-xs text-slate-500">Discover verified internships posted by corporate & technical partners.</p>
         </div>
 
         {/* Filter Controls */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="relative sm:col-span-2">
-            <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
             <input
               type="text"
-              placeholder="Search by role title or skill (e.g. FastAPI, Python, React)..."
+              placeholder="Search by role title or skill (e.g. Python, React, AI)..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && fetchJobs()}
-              className="w-full bg-slate-900/80 border border-slate-700 rounded-xl pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:border-indigo-500"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white transition"
             />
           </div>
 
@@ -79,7 +80,7 @@ const InternshipSearch = () => {
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full bg-slate-900/80 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-indigo-500"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-slate-900 focus:outline-none focus:border-indigo-500 focus:bg-white transition"
             >
               <option value="ALL">All Categories</option>
               <option value="Full Stack">Full Stack</option>
@@ -94,7 +95,7 @@ const InternshipSearch = () => {
 
       {/* Internship Cards Grid */}
       {loading ? (
-        <div className="text-center py-12 text-indigo-400">Loading internships...</div>
+        <div className="text-center py-12 text-indigo-600 text-xs font-semibold">Loading opportunities...</div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {internships.map((job) => {
@@ -104,47 +105,47 @@ const InternshipSearch = () => {
               <div
                 key={job.id}
                 onClick={() => setSelectedJob(job)}
-                className="glass-card p-5 rounded-2xl border border-slate-700/70 glass-card-hover cursor-pointer space-y-4 flex flex-col justify-between"
+                className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs hover:border-slate-300 hover:shadow-md transition cursor-pointer space-y-4 flex flex-col justify-between group"
               >
                 <div className="space-y-3">
                   <div className="flex items-start justify-between">
-                    <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-indigo-400 text-base">
+                    <div className="w-10 h-10 rounded-2xl bg-zinc-900 flex items-center justify-center font-bold text-white text-base shadow-xs group-hover:bg-indigo-600 transition">
                       {job.company?.company_name?.charAt(0) || 'C'}
                     </div>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                    <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700">
                       {job.role_category}
                     </span>
                   </div>
 
                   <div>
-                    <h3 className="text-base font-bold text-white line-clamp-1">{job.title}</h3>
-                    <p className="text-xs text-indigo-400 font-semibold mt-0.5">{job.company?.company_name}</p>
+                    <h3 className="text-base font-bold text-slate-900 line-clamp-1 group-hover:text-indigo-600 transition">{job.title}</h3>
+                    <p className="text-xs text-slate-500 font-medium mt-0.5">{job.company?.company_name}</p>
                   </div>
 
-                  <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">{job.description}</p>
+                  <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">{job.description}</p>
                 </div>
 
-                <div className="pt-3 border-t border-slate-800/80 space-y-2 text-xs">
-                  <div className="flex items-center justify-between text-slate-300 font-medium">
+                <div className="pt-4 border-t border-slate-100 space-y-3 text-xs">
+                  <div className="flex items-center justify-between text-slate-800 font-semibold">
                     <span className="flex items-center space-x-1">
-                      <DollarSign className="w-3.5 h-3.5 text-emerald-400" />
+                      <DollarSign className="w-3.5 h-3.5 text-indigo-600" />
                       <span>{job.stipend}</span>
                     </span>
-                    <span className="flex items-center space-x-1 text-slate-400">
-                      <MapPin className="w-3.5 h-3.5 text-rose-400" />
+                    <span className="flex items-center space-x-1 text-slate-500">
+                      <MapPin className="w-3.5 h-3.5 text-slate-400" />
                       <span>{job.location}</span>
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between pt-1">
-                    <span className="text-[10px] text-slate-500">{job.duration}</span>
+                    <span className="text-[10px] text-slate-400 font-medium">{job.duration}</span>
                     {isApplied ? (
-                      <span className="text-[11px] font-bold text-emerald-400 flex items-center space-x-1 bg-emerald-500/10 px-2 py-1 rounded">
-                        <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span className="text-[10px] font-semibold text-emerald-700 flex items-center space-x-1 bg-emerald-50 px-2.5 py-1 rounded-full">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                         <span>Applied</span>
                       </span>
                     ) : (
-                      <span className="text-xs text-indigo-400 font-bold hover:underline flex items-center space-x-1">
+                      <span className="text-xs text-indigo-600 font-semibold hover:underline flex items-center space-x-1">
                         <span>View Details</span>
                         <ArrowRight className="w-3.5 h-3.5" />
                       </span>
@@ -159,82 +160,83 @@ const InternshipSearch = () => {
 
       {/* Job Details Modal Drawer */}
       {selectedJob && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in">
-          <div className="glass-card w-full max-w-xl rounded-3xl border border-slate-700/80 shadow-2xl p-6 space-y-5 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-start justify-between">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in">
+          <div className="bg-white w-full max-w-xl rounded-3xl border border-slate-200 shadow-xl p-6 sm:p-8 space-y-5 max-h-[90vh] overflow-y-auto text-slate-900">
+            <div className="flex items-start justify-between border-b border-slate-100 pb-4">
               <div>
-                <h2 className="text-xl font-bold text-white">{selectedJob.title}</h2>
-                <p className="text-sm text-indigo-400 font-semibold">{selectedJob.company?.company_name}</p>
+                <h2 className="text-xl font-bold text-slate-900 tracking-tight">{selectedJob.title}</h2>
+                <p className="text-xs text-slate-500">{selectedJob.company?.company_name}</p>
               </div>
-              <button onClick={() => setSelectedJob(null)} className="p-1 rounded-lg text-slate-400 hover:text-white">
+              <button onClick={() => setSelectedJob(null)} className="p-1.5 rounded-xl text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {message && (
-              <div className="p-3 rounded-xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 text-xs">
+              <div className="p-3 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-800 text-xs font-semibold">
                 {message}
               </div>
             )}
 
-            <div className="grid grid-cols-3 gap-3 text-xs p-3 rounded-xl bg-slate-900/60 border border-slate-800">
+            <div className="grid grid-cols-3 gap-3 text-xs p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
               <div>
-                <span className="text-slate-500 block">Stipend</span>
-                <span className="font-bold text-emerald-400">{selectedJob.stipend}</span>
+                <span className="text-slate-400 block text-[10px] font-semibold">Stipend</span>
+                <span className="font-bold text-indigo-600">{selectedJob.stipend}</span>
               </div>
               <div>
-                <span className="text-slate-500 block">Location</span>
-                <span className="font-bold text-slate-200">{selectedJob.location}</span>
+                <span className="text-slate-400 block text-[10px] font-semibold">Location</span>
+                <span className="font-bold text-slate-900">{selectedJob.location}</span>
               </div>
               <div>
-                <span className="text-slate-500 block">Duration</span>
-                <span className="font-bold text-slate-200">{selectedJob.duration}</span>
+                <span className="text-slate-400 block text-[10px] font-semibold">Duration</span>
+                <span className="font-bold text-slate-900">{selectedJob.duration}</span>
               </div>
             </div>
 
-            <div className="space-y-2 text-xs">
-              <h4 className="font-bold text-slate-300 uppercase tracking-wider">Role Description</h4>
-              <p className="text-slate-400 leading-relaxed">{selectedJob.description}</p>
+            <div className="space-y-1.5 text-xs">
+              <h4 className="font-semibold text-slate-900">Role Description</h4>
+              <p className="text-slate-600 leading-relaxed">{selectedJob.description}</p>
             </div>
 
             {selectedJob.requirements && (
-              <div className="space-y-2 text-xs">
-                <h4 className="font-bold text-slate-300 uppercase tracking-wider">Requirements & Skills</h4>
-                <p className="text-slate-400 leading-relaxed">{selectedJob.requirements}</p>
+              <div className="space-y-1.5 text-xs">
+                <h4 className="font-semibold text-slate-900">Requirements & Skills</h4>
+                <p className="text-slate-600 leading-relaxed">{selectedJob.requirements}</p>
               </div>
             )}
 
             {!appliedJobIds.has(selectedJob.id) && (
-              <div className="space-y-2 pt-2">
-                <label className="block text-xs font-semibold text-slate-300">Cover Letter Note (Optional)</label>
+              <div className="space-y-1.5 pt-1">
+                <label className="block text-xs font-semibold text-slate-700">Cover Letter Note (Optional)</label>
                 <textarea
                   rows={3}
                   placeholder="Tell the recruiter why you're a great fit for this position..."
                   value={coverLetter}
                   onChange={(e) => setCoverLetter(e.target.value)}
-                  className="w-full bg-slate-900/80 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white transition"
                 />
               </div>
             )}
 
-            <div className="pt-3 border-t border-slate-800 flex justify-end space-x-3">
+            <div className="pt-4 border-t border-slate-100 flex justify-end space-x-3">
               <button
                 onClick={() => setSelectedJob(null)}
-                className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-medium hover:bg-slate-700"
+                className="px-4 py-2 rounded-xl border border-slate-200 text-xs font-medium text-slate-700 hover:bg-slate-50 transition"
               >
                 Close
               </button>
               {appliedJobIds.has(selectedJob.id) ? (
-                <button disabled className="bg-emerald-500/20 text-emerald-400 px-5 py-2 rounded-xl text-xs font-bold border border-emerald-500/30">
+                <button disabled className="bg-slate-100 text-slate-400 px-5 py-2 rounded-xl text-xs font-semibold">
                   Already Applied
                 </button>
               ) : (
                 <button
                   onClick={() => handleApply(selectedJob.id)}
                   disabled={applying}
-                  className="gradient-bg-primary px-5 py-2 rounded-xl text-xs font-bold shadow-lg shadow-indigo-600/30"
+                  className="bg-zinc-900 hover:bg-black text-white px-5 py-2 rounded-xl text-xs font-semibold transition shadow-xs flex items-center space-x-1.5"
                 >
-                  {applying ? 'Submitting Application...' : 'One-Click Apply'}
+                  <span>{applying ? 'Submitting...' : 'One-Click Apply'}</span>
+                  <ArrowRight className="w-4 h-4 text-lime-300" />
                 </button>
               )}
             </div>

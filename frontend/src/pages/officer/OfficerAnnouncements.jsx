@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { announcementService } from '../../services/api';
-import { Megaphone, Plus, Calendar } from 'lucide-react';
+import { Megaphone } from 'lucide-react';
 
 const OfficerAnnouncements = () => {
   const [announcements, setAnnouncements] = useState([]);
@@ -47,34 +47,34 @@ const OfficerAnnouncements = () => {
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in">
-      <div className="glass-card p-6 rounded-3xl border border-slate-700/80">
-        <h1 className="text-2xl font-extrabold text-white">Broadcast Placement Announcements</h1>
-        <p className="text-xs text-slate-400">Publish urgent notices and recruitment schedules to students</p>
+    <div className="space-y-6 animate-in fade-in text-slate-900 max-w-[1600px] mx-auto">
+      <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-xs space-y-1">
+        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Broadcast Placement Announcements</h1>
+        <p className="text-xs text-slate-500">Publish urgent notices and recruitment schedules to students</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="glass-card p-6 rounded-2xl border border-slate-700/80 space-y-4 text-sm">
-        {msg && <div className="p-3 rounded-xl bg-emerald-500/20 text-emerald-300 text-xs">{msg}</div>}
+      <form onSubmit={handleSubmit} className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-xs space-y-4 text-xs">
+        {msg && <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 font-semibold">{msg}</div>}
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="sm:col-span-2">
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Notice Title *</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1.5">Notice Title *</label>
             <input
               type="text"
               required
               placeholder="e.g. Google Placement Drive Schedule Update"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full bg-slate-900/80 border border-slate-700 rounded-xl px-3.5 py-2 text-white focus:outline-none focus:border-indigo-500"
+              className="w-full bg-slate-50 border border-slate-200/90 text-slate-900 placeholder-slate-400 rounded-xl px-3.5 py-2.5 text-xs font-medium focus:outline-none focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-100 transition"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Priority Level</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1.5">Priority Level</label>
             <select
               value={formData.priority}
               onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
-              className="w-full bg-slate-900/80 border border-slate-700 rounded-xl px-3.5 py-2 text-white focus:outline-none focus:border-indigo-500"
+              className="w-full bg-slate-50 border border-slate-200/90 text-slate-900 rounded-xl px-3.5 py-2.5 text-xs font-semibold focus:outline-none focus:border-indigo-500 focus:bg-white transition"
             >
               <option value="URGENT">URGENT</option>
               <option value="HIGH">HIGH</option>
@@ -84,36 +84,36 @@ const OfficerAnnouncements = () => {
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">Announcement Body Content *</label>
+          <label className="block text-xs font-semibold text-slate-700 mb-1.5">Announcement Body Content *</label>
           <textarea
             rows={4}
             required
             placeholder="Type your notice text..."
             value={formData.content}
             onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-            className="w-full bg-slate-900/80 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-indigo-500"
+            className="w-full bg-slate-50 border border-slate-200/90 text-slate-900 placeholder-slate-400 rounded-xl p-3.5 text-xs font-medium focus:outline-none focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-100 transition"
           />
         </div>
 
         <button
           type="submit"
           disabled={publishing}
-          className="gradient-bg-primary px-6 py-2.5 rounded-xl font-bold text-xs flex items-center space-x-2"
+          className="bg-zinc-900 hover:bg-black text-white px-5 py-2.5 rounded-xl font-semibold text-xs flex items-center space-x-2 transition shadow-xs"
         >
-          <Megaphone className="w-4 h-4" />
+          <Megaphone className="w-4 h-4 text-lime-300" />
           <span>{publishing ? 'Broadcasting...' : 'Broadcast Notice'}</span>
         </button>
       </form>
 
       <div className="space-y-4">
-        <h3 className="text-base font-bold text-white">Active Notices</h3>
+        <h3 className="text-base font-bold text-slate-900">Active Notices</h3>
         {announcements.map((a) => (
-          <div key={a.id} className="glass-card p-5 rounded-2xl border border-slate-700/80 space-y-2 text-xs">
+          <div key={a.id} className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs space-y-2 text-xs">
             <div className="flex items-center justify-between">
-              <span className="font-bold text-indigo-400">{a.title}</span>
-              <span className="text-[10px] text-slate-500">{new Date(a.created_at).toLocaleDateString()}</span>
+              <span className="font-bold text-slate-900">{a.title}</span>
+              <span className="text-[10px] text-slate-400 font-medium">{new Date(a.created_at).toLocaleDateString()}</span>
             </div>
-            <p className="text-slate-300">{a.content}</p>
+            <p className="text-slate-600 leading-relaxed">{a.content}</p>
           </div>
         ))}
       </div>

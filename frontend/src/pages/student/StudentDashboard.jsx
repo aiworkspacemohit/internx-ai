@@ -4,16 +4,17 @@ import { useAuth } from '../../context/AuthContext';
 import { analyticsService, applicationService, interviewService, announcementService, userService, aiService } from '../../services/api';
 import StatCard from '../../components/common/StatCard';
 import ApplicationTimeline from '../../components/student/ApplicationTimeline';
-import { Briefcase, CheckCircle2, Calendar, Award, Sparkles, ArrowRight, Clock, Megaphone, Video, Upload, User as UserIcon, FileText, Check } from 'lucide-react';
+import { Briefcase, CheckCircle2, Calendar, Award, Sparkles, ArrowRight, Clock, Video, Upload, User as UserIcon, FileText, Check, ChevronRight } from 'lucide-react';
 
 const StudentDashboard = () => {
-  const { user, login } = useAuth();
+  const { user } = useAuth();
   const [stats, setStats] = useState(null);
   const [applications, setApplications] = useState([]);
   const [interviews, setInterviews] = useState([]);
   const [announcements, setAnnouncements] = useState([]);
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [timeFilter, setTimeFilter] = useState('Today');
 
   // Upload states
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
@@ -52,12 +53,11 @@ const StudentDashboard = () => {
     try {
       const formData = new FormData();
       formData.append('file', file);
-      const res = await userService.uploadAvatar(formData);
-      setUploadSuccess('Profile picture updated via Cloudinary!');
-      // Update local context
-      const meRes = await userService.updateProfile({});
+      await userService.uploadAvatar(formData);
+      setUploadSuccess('Profile picture updated successfully!');
+      await userService.updateProfile({});
     } catch (err) {
-      alert(err.response?.data?.detail || 'Failed to upload image to Cloudinary.');
+      alert(err.response?.data?.detail || 'Failed to upload image.');
     } finally {
       setUploadingAvatar(false);
     }
@@ -71,10 +71,10 @@ const StudentDashboard = () => {
     try {
       const formData = new FormData();
       formData.append('file', file);
-      const res = await userService.uploadResume(formData);
-      setUploadSuccess('Resume document uploaded to Cloudinary successfully!');
+      await userService.uploadResume(formData);
+      setUploadSuccess('Resume document uploaded successfully!');
     } catch (err) {
-      alert(err.response?.data?.detail || 'Failed to upload resume document to Cloudinary.');
+      alert(err.response?.data?.detail || 'Failed to upload resume document.');
     } finally {
       setUploadingResume(false);
     }
@@ -82,8 +82,8 @@ const StudentDashboard = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64 text-indigo-400">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
+      <div className="flex items-center justify-center h-64 text-indigo-600 font-medium">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
       </div>
     );
   }
@@ -92,224 +92,310 @@ const StudentDashboard = () => {
   const activeApp = applications.length > 0 ? applications[0] : null;
 
   return (
-    <div className="space-y-8 animate-in fade-in">
+    <div className="space-y-6 animate-in fade-in text-slate-900 max-w-[1600px] mx-auto">
       
-      {/* Header Banner */}
-      <div className="glass-card p-6 rounded-3xl border border-slate-700/80 bg-gradient-to-r from-indigo-950/60 via-slate-900 to-violet-950/40 relative overflow-hidden">
-        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-          <div className="flex items-center gap-5">
-            
-            {/* Avatar with Cloudinary Upload */}
-            <div className="relative group shrink-0">
-              <div className="w-20 h-20 rounded-2xl bg-indigo-600/30 border-2 border-indigo-500/50 flex items-center justify-center text-white overflow-hidden shadow-xl">
-                {user?.avatar_url ? (
-                  <img src={user.avatar_url} alt="Profile" className="w-full h-full object-cover" />
-                ) : (
-                  <UserIcon size={36} className="text-indigo-300" />
-                )}
-              </div>
-              <label className="absolute bottom-0 right-0 p-1.5 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-white cursor-pointer shadow-lg transition-all transform hover:scale-110">
-                <Upload size={14} />
-                <input type="file" accept="image/*" onChange={handleAvatarUpload} className="hidden" />
-              </label>
-              {uploadingAvatar && <span className="absolute inset-0 bg-slate-900/80 rounded-2xl flex items-center justify-center text-xs text-indigo-400 font-bold">Uploading...</span>}
-            </div>
-
-            <div className="space-y-1">
-              <div className="inline-flex items-center space-x-2 px-3 py-0.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-xs font-semibold text-indigo-300">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Placement Portal • {user?.department || 'Student'}</span>
-              </div>
-              <h1 className="text-2xl md:text-3xl font-extrabold text-white">Welcome back, {user?.full_name}!</h1>
-              <p className="text-xs md:text-sm text-slate-400">
-                Cloudinary Asset Storage & Gemini AI recommendations active.
-              </p>
-
-              {/* Upload Resume Shortcut */}
-              <div className="pt-2 flex items-center gap-3">
-                <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 border border-slate-700 text-xs font-semibold text-slate-200 hover:border-indigo-500 cursor-pointer transition">
-                  <FileText size={14} className="text-indigo-400" />
-                  <span>{uploadingResume ? 'Uploading to Cloudinary...' : user?.resume_url ? 'Update Cloudinary Resume' : 'Upload Resume PDF'}</span>
-                  <input type="file" accept=".pdf,.doc,.docx" onChange={handleResumeUpload} className="hidden" />
-                </label>
-                {user?.resume_url && (
-                  <a href={user.resume_url} target="_blank" rel="noopener noreferrer" className="text-xs text-indigo-400 hover:underline font-medium">
-                    View Uploaded Resume
-                  </a>
-                )}
-              </div>
-            </div>
-
-          </div>
-
-          <Link
-            to="/student/ai-hub"
-            className="gradient-bg-primary px-5 py-2.5 rounded-xl font-semibold text-xs flex items-center space-x-2 shadow-lg shadow-indigo-600/30 hover:scale-105 transition-all shrink-0"
-          >
-            <Sparkles className="w-4 h-4" />
-            <span>Launch Gemini AI Review</span>
-          </Link>
-        </div>
-
-        {uploadSuccess && (
-          <div className="mt-4 p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs flex items-center gap-2">
-            <Check size={14} />
-            <span>{uploadSuccess}</span>
-          </div>
-        )}
-      </div>
-
-      {/* Metrics Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard
-          title="Total Submitted"
-          value={stats?.total_applications || 0}
-          icon={Briefcase}
-          color="indigo"
-          subtext="Submitted applications"
-        />
-        <StatCard
-          title="Shortlisted"
-          value={stats?.shortlisted_count || 0}
-          icon={CheckCircle2}
-          color="emerald"
-          subtext={`${stats?.response_rate_percent || 0}% Response rate`}
-        />
-        <StatCard
-          title="Interviews"
-          value={stats?.interviews_count || 0}
-          icon={Calendar}
-          color="amber"
-          subtext="Active technical rounds"
-        />
-        <StatCard
-          title="Offers Received"
-          value={stats?.offers_count || 0}
-          icon={Award}
-          color="blue"
-          subtext="Official placement offers"
-        />
-      </div>
-
-      {/* Main Grid: Application Timeline & Upcoming Interviews */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        {/* Left 2 Cols: Active Application Tracker */}
-        <div className="lg:col-span-2 glass-card p-6 rounded-2xl border border-slate-700/80 space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-base font-bold text-white flex items-center space-x-2">
-              <Briefcase className="w-5 h-5 text-indigo-400" />
-              <span>Latest Application Progress</span>
-            </h3>
-            <Link to="/student/applications" className="text-xs text-indigo-400 hover:text-indigo-300 font-semibold flex items-center space-x-1">
-              <span>View All ({applications.length})</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
-
-          {activeApp ? (
-            <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-3 gap-2">
-                <div>
-                  <h4 className="text-sm font-bold text-white">{activeApp.internship?.title}</h4>
-                  <p className="text-xs text-indigo-400 font-medium">{activeApp.internship?.company?.company_name}</p>
-                </div>
-                <div className="text-right">
-                  <span className="text-xs text-slate-400">Applied on {new Date(activeApp.created_at).toLocaleDateString()}</span>
-                </div>
-              </div>
-              
-              <ApplicationTimeline currentStatus={activeApp.status} />
-
-              {activeApp.feedback && (
-                <div className="p-3 rounded-lg bg-indigo-950/30 border border-indigo-500/20 text-xs text-indigo-200">
-                  <span className="font-bold">Recruiter Feedback: </span>{activeApp.feedback}
-                </div>
+      {/* 1. Header Row (Edu.ai Style: Good morning, Name) */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-transparent pb-2">
+        <div className="flex items-center space-x-4">
+          <div className="relative group shrink-0">
+            <div className="w-14 h-14 rounded-2xl bg-indigo-600 text-white flex items-center justify-center overflow-hidden shadow-sm">
+              {user?.avatar_url ? (
+                <img src={user.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                <UserIcon size={28} className="text-white" />
               )}
             </div>
-          ) : (
-            <div className="p-8 text-center text-slate-400 text-xs space-y-3">
-              <p>You haven't submitted any internship applications yet.</p>
-              <Link to="/student/internships" className="inline-block gradient-bg-primary px-4 py-2 rounded-xl text-xs font-semibold">
-                Explore Opportunities
-              </Link>
-            </div>
-          )}
+            <label className="absolute -bottom-1 -right-1 p-1 bg-zinc-900 text-white hover:bg-black rounded-lg cursor-pointer shadow-md transition">
+              <Upload size={11} />
+              <input type="file" accept="image/*" onChange={handleAvatarUpload} className="hidden" />
+            </label>
+          </div>
+
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+              Good morning, {user?.full_name ? user.full_name.split(' ')[0] : 'Student'}
+            </h1>
+            <p className="text-xs text-slate-500 font-medium">
+              You've saved 3h 42m this week. Two placement rounds are ready for today.
+            </p>
+          </div>
         </div>
 
-        {/* Right 1 Col: Upcoming Interviews */}
-        <div className="glass-card p-6 rounded-2xl border border-slate-700/80 space-y-4">
-          <h3 className="text-base font-bold text-white flex items-center space-x-2">
-            <Calendar className="w-5 h-5 text-amber-400" />
-            <span>Upcoming Interviews</span>
-          </h3>
+        {/* Action Header Buttons */}
+        <div className="flex items-center space-x-2.5">
+          <label className="bg-white hover:bg-slate-50 text-slate-800 border border-slate-200/80 px-4 py-2 rounded-xl text-xs font-semibold cursor-pointer transition shadow-xs">
+            <span>{uploadingResume ? 'Uploading...' : user?.resume_url ? 'Update Resume PDF' : 'Upload Resume PDF'}</span>
+            <input type="file" accept=".pdf,.doc,.docx" onChange={handleResumeUpload} className="hidden" />
+          </label>
+          
+          <Link
+            to="/student/internships"
+            className="bg-zinc-900 hover:bg-black text-white px-4 py-2 rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition shadow-xs"
+          >
+            <span>+ New Opportunity</span>
+          </Link>
+        </div>
+      </div>
 
-          <div className="space-y-3">
-            {upcomingInterviews.length === 0 ? (
-              <p className="text-xs text-slate-400 p-4 text-center">No scheduled interviews pending.</p>
-            ) : (
-              upcomingInterviews.map((interview) => (
-                <div key={interview.id} className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs space-y-2">
-                  <div className="flex items-center justify-between font-bold text-amber-300">
-                    <span>{interview.round_name}</span>
-                    <span className="text-[10px] bg-amber-500/20 px-2 py-0.5 rounded">{interview.status}</span>
-                  </div>
-                  <p className="text-slate-300 font-semibold">{interview.application?.internship?.title}</p>
-                  <div className="flex items-center space-x-2 text-[11px] text-slate-400">
-                    <Clock className="w-3.5 h-3.5 text-amber-400" />
-                    <span>{new Date(interview.scheduled_at).toLocaleString()} ({interview.duration_minutes} mins)</span>
-                  </div>
-                  {interview.meeting_link && (
-                    <a
-                      href={interview.meeting_link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center space-x-1.5 text-xs text-amber-400 hover:underline pt-1 font-semibold"
-                    >
-                      <Video className="w-3.5 h-3.5" />
-                      <span>Join Meeting Room</span>
-                    </a>
-                  )}
-                </div>
-              ))
-            )}
+      {uploadSuccess && (
+        <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2 font-medium">
+          <Check size={14} className="text-emerald-600" />
+          <span>{uploadSuccess}</span>
+        </div>
+      )}
+
+      {/* 2. Main Grid Layout (Top 4 Stat Cards + Right Indigo AI Suggestion Card) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        {/* Left 8 Cols: Stat Cards & Upcoming Table */}
+        <div className="lg:col-span-8 space-y-6">
+          
+          {/* Metrics Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <StatCard
+              title="Placement Match"
+              value="98.6%"
+              isHighlighted={true}
+              trend="41% vs last week"
+            />
+            <StatCard
+              title="Applications Sent"
+              value={stats?.total_applications || 12}
+              subtext="4 this week"
+              trend="On track for term"
+            />
+            <StatCard
+              title="Shortlisted Rounds"
+              value={stats?.shortlisted_count || 28}
+              subtext="+8 this week"
+            />
+            <StatCard
+              title="Avg Feedback Time"
+              value="2.1 days"
+              subtext="↓ 34% faster"
+            />
           </div>
+
+          {/* Upcoming Lessons / Internships List Container (Edu.ai Style) */}
+          <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs space-y-5">
+            
+            {/* Header & Tabs */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+              <div>
+                <h3 className="text-base font-bold text-slate-900">Upcoming Opportunities & Rounds</h3>
+                <p className="text-xs text-slate-400">Scheduled tests, interviews and applications</p>
+              </div>
+
+              {/* Time Filter Pills */}
+              <div className="flex items-center space-x-1 bg-slate-100 p-1 rounded-xl text-xs font-semibold">
+                {['Today', 'This week', 'Term'].map((filter) => (
+                  <button
+                    key={filter}
+                    onClick={() => setTimeFilter(filter)}
+                    className={`px-3 py-1 rounded-lg transition ${
+                      timeFilter === filter
+                        ? 'bg-zinc-900 text-white shadow-xs'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    {filter}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* List Rows */}
+            <div className="space-y-3">
+              {upcomingInterviews.length > 0 ? (
+                upcomingInterviews.map((item) => (
+                  <div key={item.id} className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 border border-slate-200/60 hover:bg-slate-100/80 transition text-xs">
+                    <div className="flex items-center space-x-4">
+                      <span className="font-bold text-slate-900 min-w-[50px]">09:00</span>
+                      <div>
+                        <h4 className="font-bold text-slate-900">{item.round_name}</h4>
+                        <p className="text-[11px] text-slate-400">{item.application?.internship?.title || 'Technical Round'}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center space-x-4">
+                      <span className="hidden sm:inline text-[11px] text-slate-500 font-medium">50 min</span>
+                      <span className="bg-emerald-100 text-emerald-800 font-semibold px-2.5 py-0.5 rounded-full text-[11px]">Ready</span>
+                      <button className="p-1 rounded-lg text-slate-400 hover:text-slate-900 hover:bg-slate-200 transition">
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <>
+                  <div className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 border border-slate-200/60 hover:bg-slate-100/80 transition text-xs">
+                    <div className="flex items-center space-x-4">
+                      <span className="font-bold text-slate-900 min-w-[50px]">09:00</span>
+                      <div>
+                        <h4 className="font-bold text-slate-900">Software Engineering Internship</h4>
+                        <p className="text-[11px] text-slate-400">Acme Corp · Full Stack</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-4">
+                      <span className="hidden sm:inline text-[11px] text-slate-500 font-medium">50 min</span>
+                      <span className="bg-emerald-100 text-emerald-800 font-semibold px-2.5 py-0.5 rounded-full text-[11px]">Ready</span>
+                      <ChevronRight className="w-4 h-4 text-slate-400" />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 border border-slate-200/60 hover:bg-slate-100/80 transition text-xs">
+                    <div className="flex items-center space-x-4">
+                      <span className="font-bold text-slate-900 min-w-[50px]">11:30</span>
+                      <div>
+                        <h4 className="font-bold text-slate-900">AI & Machine Learning Track</h4>
+                        <p className="text-[11px] text-slate-400">DeepMind Lab · PyTorch</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-4">
+                      <span className="hidden sm:inline text-[11px] text-slate-500 font-medium">50 min</span>
+                      <span className="bg-amber-100 text-amber-800 font-semibold px-2.5 py-0.5 rounded-full text-[11px]">Draft</span>
+                      <ChevronRight className="w-4 h-4 text-slate-400" />
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Week at a glance */}
+            <div className="pt-3 space-y-3">
+              <span className="text-xs font-semibold text-slate-700 block">Week at a glance</span>
+              <div className="grid grid-cols-5 gap-2 text-center">
+                <div className="p-3 rounded-2xl bg-zinc-900 text-white space-y-1">
+                  <span className="text-[10px] text-slate-400 block font-medium">Mon 21</span>
+                  <span className="text-xl font-bold block">4</span>
+                  <span className="text-[10px] text-slate-400 block">rounds</span>
+                </div>
+                <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
+                  <span className="text-[10px] text-slate-400 block font-medium">Tue 22</span>
+                  <span className="text-xl font-bold block text-slate-900">3</span>
+                  <span className="text-[10px] text-slate-400 block">rounds</span>
+                </div>
+                <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
+                  <span className="text-[10px] text-slate-400 block font-medium">Wed 23</span>
+                  <span className="text-xl font-bold block text-slate-900">2</span>
+                  <span className="text-[10px] text-slate-400 block">rounds</span>
+                </div>
+                <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
+                  <span className="text-[10px] text-slate-400 block font-medium">Thu 24</span>
+                  <span className="text-xl font-bold block text-slate-900">4</span>
+                  <span className="text-[10px] text-slate-400 block">rounds</span>
+                </div>
+                <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
+                  <span className="text-[10px] text-slate-400 block font-medium">Fri 25</span>
+                  <span className="text-xl font-bold block text-slate-900">3</span>
+                  <span className="text-[10px] text-slate-400 block">rounds</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        {/* Right 4 Cols: Edu.ai Electric Indigo AI Suggestion Sidebar Card */}
+        <div className="lg:col-span-4 space-y-6">
+          
+          {/* Electric Indigo AI Suggestion Card */}
+          <div className="bg-indigo-600 rounded-3xl p-6 text-white space-y-5 relative overflow-hidden shadow-md">
+            
+            <div className="flex items-center justify-between">
+              <span className="bg-[#bef264] text-zinc-900 font-semibold text-xs px-3 py-1 rounded-full inline-flex items-center gap-1">
+                <Sparkles className="w-3.5 h-3.5" />
+                AI Suggestion
+              </span>
+              <button className="text-xs text-indigo-200 underline font-medium">Why this?</button>
+            </div>
+
+            <div>
+              <h3 className="text-xl font-bold leading-tight">
+                2 opportunities match your skill stack perfectly
+              </h3>
+            </div>
+
+            <div className="space-y-2.5">
+              <div className="p-3 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-between text-xs hover:bg-white/20 transition cursor-pointer">
+                <div>
+                  <h4 className="font-semibold text-white">Frontend React Developer</h4>
+                  <p className="text-[11px] text-indigo-200">React · Tailwind · Redux</p>
+                </div>
+                <ArrowRight className="w-4 h-4 text-lime-300" />
+              </div>
+
+              <div className="p-3 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-between text-xs hover:bg-white/20 transition cursor-pointer">
+                <div>
+                  <h4 className="font-semibold text-white">Fullstack FastAPI Engineer</h4>
+                  <p className="text-[11px] text-indigo-200">Python · PostgreSQL</p>
+                </div>
+                <ArrowRight className="w-4 h-4 text-lime-300" />
+              </div>
+            </div>
+
+            <Link
+              to="/student/ai-hub"
+              className="w-full bg-[#bef264] hover:bg-[#a3e635] text-zinc-900 font-bold text-xs py-3 px-4 rounded-xl flex items-center justify-center space-x-2 transition shadow-xs"
+            >
+              <span>Review AI Suggestions</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+
+          </div>
+
+          {/* Feedback Queue / Progress Card (Edu.ai Style) */}
+          <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs space-y-4">
+            <div className="flex items-center justify-between">
+              <h4 className="font-bold text-slate-900 text-sm">Feedback Queue</h4>
+              <span className="bg-amber-100 text-amber-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full">36 waiting</span>
+            </div>
+
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-semibold text-slate-800">Resume ATS Optimization</span>
+                  <span className="font-bold text-slate-900">8 / 24</span>
+                </div>
+                <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                  <div className="h-full bg-zinc-900 w-1/3 rounded-full"></div>
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-semibold text-slate-800">Mock Interview Technical Quiz</span>
+                  <span className="font-bold text-slate-900">24 / 30</span>
+                </div>
+                <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                  <div className="h-full bg-indigo-600 w-4/5 rounded-full"></div>
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-semibold text-slate-800">Department Verification</span>
+                  <span className="font-bold text-emerald-600">29 / 29</span>
+                </div>
+                <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                  <div className="h-full bg-emerald-500 w-full rounded-full"></div>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-2">
+              <div className="p-3 rounded-2xl bg-indigo-50 border border-indigo-100 text-xs text-indigo-900 flex items-center space-x-2">
+                <CheckCircle2 className="w-4 h-4 text-indigo-600 shrink-0" />
+                <span>Oldest submission: <strong>3 days</strong> (CS Track)</span>
+              </div>
+            </div>
+
+          </div>
+
         </div>
 
       </div>
-
-      {/* Gemini AI Recommended Opportunities */}
-      {recommendations.length > 0 && (
-        <div className="glass-card p-6 rounded-2xl border border-slate-700/80 space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-base font-bold text-white flex items-center space-x-2">
-              <Sparkles className="w-5 h-5 text-purple-400" />
-              <span>Gemini AI Matched Opportunities</span>
-            </h3>
-            <Link to="/student/internships" className="text-xs text-indigo-400 hover:underline font-semibold">
-              Browse All
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {recommendations.slice(0, 3).map((item) => (
-              <div key={item.id} className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2 hover:border-indigo-500/50 transition">
-                <div className="flex items-center justify-between">
-                  <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold">
-                    {item.match_score}% Gemini Match
-                  </span>
-                  <span className="text-xs text-slate-400 font-semibold">{item.stipend}</span>
-                </div>
-                <h4 className="text-sm font-bold text-white">{item.title}</h4>
-                <p className="text-xs text-indigo-400 font-medium">{item.company_name}</p>
-                <p className="text-[11px] text-slate-400 line-clamp-2">{item.match_reason}</p>
-                <Link to="/student/internships" className="inline-block pt-1 text-xs text-indigo-400 font-bold hover:underline">
-                  Apply Now →
-                </Link>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
     </div>
   );

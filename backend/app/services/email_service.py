@@ -1,5 +1,6 @@
 import logging
 import smtplib
+import time
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from app.core.config import settings
@@ -21,7 +22,7 @@ def generate_html_template(title: str, recipient_name: str, main_content: str, c
         .content {{ padding: 32px 24px; line-height: 1.6; font-size: 15px; color: #cbd5e1; }}
         .greeting {{ font-size: 18px; font-weight: 700; color: #ffffff; margin-bottom: 16px; }}
         .card-box {{ background-color: #1e293b; border-radius: 12px; border: 1px solid #334155; padding: 20px; margin: 20px 0; }}
-        .otp-badge {{ font-size: 32px; font-weight: 900; letter-spacing: 8px; color: #818cf8; text-align: center; background: #0f172a; padding: 16px; border-radius: 12px; border: 1px dashed #6366f1; margin: 20px 0; }}
+        .otp-badge {{ font-size: 32px; font-weight: 900; letter-spacing: 8px; color: #bef264; text-align: center; background: #0f172a; padding: 16px; border-radius: 12px; border: 1px dashed #bef264; margin: 20px 0; }}
         .btn {{ display: inline-block; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: #ffffff !important; text-decoration: none; padding: 12px 28px; border-radius: 10px; font-weight: 700; font-size: 14px; margin-top: 16px; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4); }}
         .footer {{ background-color: #0b0f19; padding: 20px; text-align: center; font-size: 12px; color: #64748b; border-top: 1px solid #1f2937; }}
       </style>
@@ -52,7 +53,7 @@ def generate_html_template(title: str, recipient_name: str, main_content: str, c
 
 def send_notification_email(to_email: str, recipient_name: str, subject: str, title: str, main_content: str, cta_text: str = "Go to Dashboard", cta_url: str = None):
     """
-    Sends background email notifications via SMTP.
+    Sends background email notifications via SMTP with fast 6s socket timeout & SSL/TLS auto-detection.
     """
     if not settings.ENABLE_EMAIL_NOTIFICATIONS:
         logger.info(f"[EMAIL NOTIFICATIONS DISABLED] Skipped email to {to_email}")
@@ -62,14 +63,13 @@ def send_notification_email(to_email: str, recipient_name: str, subject: str, ti
 
     if not settings.SMTP_USER or not settings.SMTP_PASSWORD:
         logger.info(f"==================================================")
-        logger.info(f"[SIMULATED EMAIL NOTIFICATION SENT]")
-        logger.info(f"To: {to_email}")
+        logger.info(f"📧 [SIMULATED EMAIL SENT TO {to_email}]")
         logger.info(f"Subject: {subject}")
         logger.info(f"Title: {title}")
-        logger.info(f"Action Link: {cta_url or settings.FRONTEND_URL}")
         logger.info(f"==================================================")
         return
 
+    start_time = time.time()
     try:
         msg = MIMEMultipart()
         sender_name = settings.EMAILS_FROM_NAME or "InternX AI Placement Cell"
@@ -79,19 +79,29 @@ def send_notification_email(to_email: str, recipient_name: str, subject: str, ti
         msg["Subject"] = subject
         msg.attach(MIMEText(html_body, "html"))
 
-        server = smtplib.SMTP(settings.SMTP_SERVER, settings.SMTP_PORT)
-        server.starttls()
+        # Support Port 465 (SSL) and Port 587 (TLS/STARTTLS) with 6s timeout
+        if int(settings.SMTP_PORT) == 465:
+            server = smtplib.SMTP_SSL(settings.SMTP_SERVER, int(settings.SMTP_PORT), timeout=6)
+        else:
+            server = smtplib.SMTP(settings.SMTP_SERVER, int(settings.SMTP_PORT), timeout=6)
+            server.starttls()
+
         server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
         server.send_message(msg)
         server.quit()
-        logger.info(f"Successfully delivered notification email to {to_email}")
+        elapsed = round(time.time() - start_time, 2)
+        logger.info(f"✅ Delivered email to {to_email} in {elapsed}s")
     except Exception as e:
-        logger.error(f"Failed to deliver email to {to_email}: {e}")
+        logger.error(f"❌ Failed to deliver email to {to_email}: {e}")
 
 def send_otp_email(to_email: str, recipient_name: str, otp_code: str):
     """
     Sends 6-digit Gmail OTP verification code to student email.
     """
+    logger.info("==================================================")
+    logger.info(f"🔑 [REGISTRATION OTP FOR {to_email}]: {otp_code}")
+    logger.info("==================================================")
+
     subject = "🔑 Your InternX AI Student Registration OTP Code"
     title = "Verify Your Student Account"
     main_content = f"""
